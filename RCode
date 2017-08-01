@@ -1,0 +1,67 @@
+# GE IH 7/29/2017
+# Timeserize data analysis with R
+# Based on http://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/src/timeseries.html
+
+########################################################
+#             Case 2 - Decay Prevention                #
+########################################################
+setwd("C:/Javad/Wayne Works/Other/0. Other Activities/2017.07.28 GE Hacktown")
+library(data.table)
+
+
+################# Data Set for sensor #1 ###############
+mydat <- fread('https://api.schr.me/communitychange/temp1')
+mydatT=t(mydat)
+#View(mydatT)
+plot(mydatT,ylim=range(0: 260), pch=20,ylab="T(degree fahrenheit)",xlab="Measurment",col=10)
+title(main = "Tempreture Data in Sensor 1")
+
+# removing the errors from the data
+for (i in 2:length(mydatT)){
+  if(mydatT[i,1] > (2*mydatT[i-1,1])){
+    mydatT[i,1]=mydatT[i-1,1]
+  }}
+#View(mydatT)
+plot(mydatT,ylim=range(65: 87), pch=20,ylab="T(degree fahrenheit)",xlab="Measurment",col=10)
+title(main = "Tempreture Data in Sensor 1 - Errors Removed")
+
+
+################# Data Set for sensor #2 ###############
+mydat2 <- fread('https://api.schr.me/communitychange/temp2')
+mydatT2=t(mydat2)
+#View(mydatT2)
+plot(mydatT2, pch=20,ylim=range(0: 280), ylab="T(degree fahrenheit)",xlab="Measurment",col=9)  
+title(main = "Tempreture Data in Sensor 2")
+
+# removing the errors from the data
+for (i in 2:length(mydatT2)){
+  if(mydatT2[i,1] > (2*mydatT2[i-1,1])){
+    mydatT2[i,1]=mydatT2[i-1,1]
+  }}
+#View(mydatT2)
+plot(mydatT2,ylim=range(65: 80), pch=20,ylab="T(degree fahrenheit)",xlab="Measurment",col=9)
+title(main = "Tempreture Data in Sensor 2 - Errors Removed")
+
+########################################################
+#             Heat Transfer Calculation                #
+########################################################
+
+L=200 # leanght of the storage room ft
+W=150 # width of the storage room ft
+h=60 # hight of the storage room ft
+V=L*W*h # volume of the room
+SHC= 1.006 # Specific heat capacity of air is 1.006 kJ/kgC
+den= 0.036 # density of air is 0.036 kg/cu.ft.
+mass= den*V # mass = density x volume
+CurrentT = 1# 
+DesiredT=2 #
+DeltaT= abs(DesiredT - CurrentT) # Temperature differential
+energyneeded=SHC*mass*DeltaT #energy needed KJ
+P=1000 # with a 1000 kj space heater
+Howlong=energyneeded/P # time need to have a heater or cooler on
+
+#https://www.quora.com/How-much-energy-does-it-take-to-raise-the-temperature-of-an-average-room-by-10-degrees
+
+
+
+
